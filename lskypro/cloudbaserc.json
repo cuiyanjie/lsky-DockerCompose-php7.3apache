@@ -1,0 +1,37 @@
+{
+    "version": "2.0",
+    "envId": "{{env.ENV_ID}}",
+    "framework":{
+        "name":"lsky-pro",
+        "plugins":{
+            "client": {
+                "use": "@cloudbase/framework-plugin-container",
+                "inputs": {
+                "cpu": 0.5,
+                "mem": 1,    
+                "serviceName": "lsky-pro",
+                "servicePath": "/",
+                "localPath": "/",
+                "mode":"high-availability",
+                "uploadType": "package",
+                "containerPort": 80,
+                "volumeMounts": {
+                    "/var/www/html": "lsky-cfs"
+                  }
+                }
+            }
+        },
+        "requirement": {
+            "addons": [
+              {
+                "type": "CFS",
+                "name": "lsky-cfs"
+              },
+              {
+                "type": "CynosDB",
+                "name": "lsky"
+              }
+            ]
+          }
+    }
+}

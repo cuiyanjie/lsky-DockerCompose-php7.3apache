@@ -1,0 +1,88 @@
+# yml文件
+version: '3'
+services:
+  mysql-main:
+    image: mysql:5.7.22
+    restart: always
+    #名称(可以为空)
+    hostname: mysql-main
+    #容器名称
+    container_name: mysql-main
+    # command: --init-file ./create_db.sql 
+    # 修改加密规则
+    command: --default-authentication-plugin=mysql_native_password
+    ports: 
+    - "9306:3306" 
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - mysql-conf:/etc/mysql
+      - mysql-log:/var/log/mysql
+      - ./mysql/init:/docker-entrypoint-initdb.d
+    environment:
+      MYSQL_ROOT_PASSWORD: zyudockerdb
+    networks:
+      - mysql-net
+    
+  lskypro:
+    # build:
+    #   # 指定dockerfile文件的所在路径
+    #   context: ./lskypro
+    #   # 指定Dockerfile文件名称
+    #   dockerfile: Dockerfile
+    image: zyugat/lskypro:1.6.3
+    restart: always
+    #名称(可以为空)
+    hostname: lskypro
+    #容器名称
+    container_name: lskypro
+    ports: 
+      - "9080:80" 
+    volumes:
+      - lsky-data:/var/www/html
+    networks:
+      - mysql-net
+
+  # php-main:
+  #   image: phpdockerio/php73-fpm
+  #   privileged: true
+  #   #名称(可以为空)
+  #   hostname: php-main
+  #   #容器名称
+  #   container_name: php-main
+  #   volumes:
+  #     - /www/web:/web
+  #   networks:
+  #     - mysql-net
+
+  # lskypro:
+  #   build:
+  #     # 指定dockerfile文件的所在路径
+  #     context: ./lskypro
+  #     # 指定Dockerfile文件名称
+  #     dockerfile: Dockerfile
+  #   restart: always
+  #   #名称(可以为空)
+  #   hostname: lskypro
+  #   #容器名称
+  #   container_name: lskypro
+  #   ports: 
+  #   - "9180:80"
+  #   volumes:
+  #     - ./lskypro/html:/var/www/html
+  #     # - ./lskypro/default.conf:/etc/nginx/conf.d
+  #     - ./lskypro/remoteip.load:/etc/apache2/mods-enabled/remoteip.load
+  #     - ./lskypro/000-default.conf:/etc/apache2/sites-available/000-default.conf
+  #     - ./lskypro/000-default.conf:/etc/apache2/sites-enabled/000-default.conf
+  #   networks:
+  #     - mysql-net
+
+
+
+volumes:
+  mysql-data:
+  mysql-conf:
+  mysql-log:
+  lsky-data:
+
+networks:
+  mysql-net:
