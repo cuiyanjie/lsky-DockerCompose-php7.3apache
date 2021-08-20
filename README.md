@@ -10,7 +10,16 @@
 
 ## 2、拉取镜像
 
-首先感谢这位<a href="https://github.com/Handsomedoggy/lsky-pro">大哥的Dockerfile文件</a>，真的标准，我是用他的构建的。
+首先感谢这位<a href="https://github.com/Handsomedoggy/lsky-pro">大哥的Dockerfile文件</a>，真的标准，我是在他的基础上加了个国内阿里云加速。
+
+阿里云加速
+
+```dockerfile
+RUN sed -i "s@http://deb.debian.org@http://mirrors.aliyun.com@g" /etc/apt/sources.list && \
+    apt-get clean
+```
+
+
 
 镜像包：https://hub.docker.com/repository/docker/zyugat/lskypro
 
