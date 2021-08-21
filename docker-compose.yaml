@@ -1,5 +1,5 @@
 # yml文件
-version: '3'
+version: '3.4'
 services:
   mysql-main:
     image: mysql:5.7.22
@@ -19,7 +19,7 @@ services:
       - mysql-log:/var/log/mysql
       - ./mysql/init:/docker-entrypoint-initdb.d
     environment:
-      MYSQL_ROOT_PASSWORD: zyudockerdb
+      MYSQL_ROOT_PASSWORD: mysqldb
     networks:
       - mysql-net
     
@@ -42,47 +42,21 @@ services:
     networks:
       - mysql-net
 
-  # php-main:
-  #   image: phpdockerio/php73-fpm
-  #   privileged: true
-  #   #名称(可以为空)
-  #   hostname: php-main
-  #   #容器名称
-  #   container_name: php-main
-  #   volumes:
-  #     - /www/web:/web
-  #   networks:
-  #     - mysql-net
-
-  # lskypro:
-  #   build:
-  #     # 指定dockerfile文件的所在路径
-  #     context: ./lskypro
-  #     # 指定Dockerfile文件名称
-  #     dockerfile: Dockerfile
-  #   restart: always
-  #   #名称(可以为空)
-  #   hostname: lskypro
-  #   #容器名称
-  #   container_name: lskypro
-  #   ports: 
-  #   - "9180:80"
-  #   volumes:
-  #     - ./lskypro/html:/var/www/html
-  #     # - ./lskypro/default.conf:/etc/nginx/conf.d
-  #     - ./lskypro/remoteip.load:/etc/apache2/mods-enabled/remoteip.load
-  #     - ./lskypro/000-default.conf:/etc/apache2/sites-available/000-default.conf
-  #     - ./lskypro/000-default.conf:/etc/apache2/sites-enabled/000-default.conf
-  #   networks:
-  #     - mysql-net
-
-
-
 volumes:
   mysql-data:
+    name: mysql-data
+    # 不主动创建卷，而从外部寻找
+    # external: true
   mysql-conf:
+    # external: true
+    name: mysql-conf
   mysql-log:
+    # external: true
+    name: mysql-log
   lsky-data:
+    # external: true
+    name: lsky-data
 
 networks:
   mysql-net:
+    name: mysql-net

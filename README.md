@@ -10,22 +10,14 @@
 
 ## 2、拉取镜像
 
-首先感谢这位<a href="https://github.com/Handsomedoggy/lsky-pro">大哥的Dockerfile文件</a>，真的标准，我是在他的基础上加了个国内阿里云加速。
+首先感谢这位<a href="https://github.com/Handsomedoggy/lsky-pro">大哥的Dockerfile文件</a>。
 
-阿里云加速
-
-```dockerfile
-RUN sed -i "s@http://deb.debian.org@http://mirrors.aliyun.com@g" /etc/apt/sources.list && \
-    apt-get clean
-```
-
-
+要注意他的Dockerdile文件还没修改PHP上传图片的限制，我在他基础上修改成100M，待会会对此进行说明。
 
 镜像包：https://hub.docker.com/repository/docker/zyugat/lskypro
 
 ```shell
 docker pull zyugat/lskypro:1.6.3
-docker pull zyugat/lskypro:1.6.3-noVolume
 ```
 
 
@@ -44,7 +36,7 @@ CREATE DATABASE IF NOT EXISTS lsky DEFAULT CHARSET utf8 COLLATE utf8_general_ci;
 
 
 
-`docker-compose`
+`docker-compose.yaml`
 
 ```yaml
 # yml文件
@@ -100,6 +92,18 @@ networks:
 
 
 
+补充：`docker-php-upload.ini`=>`/usr/local/etc/php/conf.d/docker-php-upload.ini`
+
+PHP上默认会限制10M，需要修改。
+
+```ini
+post_max_size = 100M;
+upload_max_filesize = 100M;
+max_execution_time = 600S;
+```
+
+
+
 ## 4、运行
 
 进入目录，我的是：`cd /home/docker`
@@ -129,6 +133,30 @@ networks:
 
 
 
+**文件上传限制大小**
+
+`vim /usr/local/nginx/conf/nginx.conf`
+
+修改：`client_max_body_size`
+
+```conf
+http
+    {
+        include       mime.types;
+        default_type  application/octet-stream;
+
+        server_names_hash_bucket_size 128;
+        client_header_buffer_size 32k;
+        large_client_header_buffers 4 32k;
+        client_max_body_size 100m;	#  修改这个!!
+```
+
+
+
+重载配置：`/etc/init.d/nginx reload`
+
+
+
 **防跨目录设置**
 
 参考：https://github.com/wisp-x/lsky-pro/issues/31
@@ -137,6 +165,8 @@ networks:
 cd /opt/lnmp1.x/tools
 ./remove_open_basedir_restriction.sh
 ```
+
+
 
 
 
