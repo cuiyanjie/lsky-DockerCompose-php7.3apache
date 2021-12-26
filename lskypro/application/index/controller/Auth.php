@@ -14,11 +14,11 @@ use think\facade\Session;
 
 class Auth extends Base
 {
-    public function login($type = null, $account = null, $password = null)
+    public function login($account = null, $password = null)
     {
         if ($this->request->isPost()) {
             try {
-                Users::login($account, $password, $type);
+                Users::login($account, $password, filter_var($account, FILTER_VALIDATE_EMAIL) ? 'email' : 'username');
             } catch (Exception $e) {
                 Session::flash('error', $e->getMessage());
                 return $this->fetch();
@@ -47,6 +47,10 @@ class Auth extends Base
             }
             Session::flash('success', '注册成功');
             $this->redirect(url('auth/login'));
+        }
+
+        if ($this->getConfig('close_register')) {
+            abort(404, '系统已关闭注册');
         }
         return $this->fetch();
     }

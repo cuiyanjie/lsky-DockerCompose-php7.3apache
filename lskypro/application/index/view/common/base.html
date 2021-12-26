@@ -12,7 +12,7 @@
   {block name="css"}{/block}
   <link rel="shortcut icon" href="/favicon.ico">
   <link rel="stylesheet" href="/static/app/iconfont/iconfont.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mdui@0.4.3/dist/css/mdui.min.css">
+  <link rel="stylesheet" href="/static/mdui/css/mdui.min.css">
   <link rel="stylesheet" href="/static/app/css/app.css?v=1.5">
   <link rel="stylesheet" href="/static/app/css/markdown.css?v=1.0">
   <!--[if IE]>
@@ -29,7 +29,7 @@
     <div class="mdui-toolbar-spacer"></div>
     {if $user}
       <!-- Update -->
-      {if $user.is_admin}
+      {if $user.is_admin && $config.system_version < 2}
       <span id="update" class="mdui-btn mdui-btn-icon"><i class="mdui-icon material-icons">&#xe923;</i></span>
       {/if}
     <!-- User -->
@@ -110,10 +110,12 @@
       <i class="mdui-list-item-icon mdui-icon material-icons iconfont icon-login mdui-text-color-teal"></i>
       <div class="mdui-list-item-content">登录</div>
     </a>
+    {if !$config.close_register}
     <a class="mdui-list-item mdui-ripple {if $uri eq 'auth/register'}mdui-list-item-active{/if}" href="{:url('auth/register')}">
       <i class="mdui-list-item-icon mdui-icon material-icons mdui-text-color-purple">&#xe7f0;</i>
       <div class="mdui-list-item-content">注册</div>
     </a>
+    {/if}
     {/if}
   </div>
 </div>
@@ -143,10 +145,10 @@
   </div>
 </footer>
 {/block}
-<script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/mdui@0.4.3/dist/js/mdui.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/marked@0.8.0/marked.min.js"></script>
+<script src="/static/app/js/jquery-3.3.1.min.js"></script>
+<script src="/static/mdui/js/mdui.min.js"></script>
+<script src="/static/app/js/clipboard-2.0.6.min.js"></script>
+<script src="/static/app/js/marked-0.8.0.min.js"></script>
 <script src="/static/app/js/app.js?v=1.2"></script>
 {block name="js"}{/block}
 <script>
@@ -186,11 +188,6 @@
     });
   });
 </script>
-{if $user and $user.is_admin and !cookie('?no_update')}
-<script>
-  app.getLastVer(ver, false);
-</script>
-{/if}
 {$config.statistics_code|raw}
 </body>
 </html>

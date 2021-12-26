@@ -3,9 +3,9 @@
 {block name="title"}{$config.site_name}{/block}
 
 {block name="css"}
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-fileinput@5.0.7/css/fileinput.min.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.12.1/css/all.min.css" rossorigin="anonymous" rel="stylesheet">
+<link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<link href="/static/bootstrap-fileinput/css/fileinput.min.css" rel="stylesheet">
+<link href="/static/fontawesome-free/css/all.min.css" rossorigin="anonymous" rel="stylesheet">
 {/block}
 
 {block name="main"}
@@ -55,18 +55,36 @@
     {/if}
   </main>
 </div>
+<div class="mdui-fab-wrapper" id="fab-buttons">
+  <button class="mdui-fab mdui-ripple mdui-color-blue-700 mdui-fab-hide copy" id="copy-all">
+    <i class="mdui-icon material-icons">&#xe14d;</i>
+  </button>
+</div>
 {/block}
 {block name="js"}
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap-fileinput@5.0.7/js/plugins/piexif.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap-fileinput@5.0.7/js/plugins/sortable.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap-fileinput@5.0.7/js/plugins/purify.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap-fileinput@5.0.7/js/fileinput.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap-fileinput@5.0.7/themes/fas/theme.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap-fileinput@5.0.7/js/locales/zh.js"></script>
+<script src="/static/bootstrap/js/bootstrap.min.js"></script>
+<script src="/static/bootstrap-fileinput/js/plugins/piexif.min.js"></script>
+<script src="/static/bootstrap-fileinput/js/plugins/sortable.min.js"></script>
+<script src="/static/bootstrap-fileinput/js/plugins/purify.min.js"></script>
+<script src="/static/bootstrap-fileinput/js/fileinput.min.js"></script>
+<script src="/static/bootstrap-fileinput/themes/fas/theme.min.js"></script>
+<script src="/static/bootstrap-fileinput/js/locales/zh.js"></script>
 <script>
   var clipboard = new ClipboardJS('.copy', {
     text: function(trigger) {
+      // copy all
+      if (trigger.id === 'copy-all') {
+        var str = '';
+        var id = $('.success-info a.mdui-tab-active').attr('href');
+        $(id + ' li').each(function (index, item) {
+          if (index > 0) {
+            str += '\r\n';
+          }
+          str += $(item).text();
+        });
+        return str;
+      }
+
       return $(trigger).parent('li').text();
     }
   });
@@ -78,6 +96,10 @@
   clipboard.on('error', function(e) {
     app.msg(false, '复制失败');
   });
+
+  var toggleCopyAllBtn = function () {
+    $('#copy-all')[$('#code-url ul li').length ? 'removeClass' : 'addClass']('mdui-fab-hide');
+  }
 
   var sort = function (uls) {
     for (var i = 0; i < uls.length; i++) {
@@ -121,6 +143,7 @@
         $('.quota-container span.quota').text(app.bytesToSize(response.data.quota));
         $('.quota-container span.use-quota').text(app.bytesToSize(response.data.use_quota));
       }
+      toggleCopyAllBtn();
     } else if (500 === response.code) {
       mdui.alert(response.msg, '发生异常');
     } else {
@@ -133,6 +156,7 @@
       .find('#code-url, #code-html, #code-bbcode, #code-markdown, #code-markdown-with-link')
       .find('ul')
       .html('');
+    toggleCopyAllBtn();
   });
   $('#image').css("display", "block");
 
@@ -141,6 +165,7 @@
   }).on('mouseout', 'li', function () {
     $('.file-preview .file-drop-zone .file-preview-thumbnails > [data-template=image]').eq($(this).data('index')).removeClass('hover');
   });
+
 </script>
 {if 1 == $config.allowed_tourist_upload or $user}
 <script>

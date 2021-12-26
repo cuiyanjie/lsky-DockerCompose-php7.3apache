@@ -17,7 +17,7 @@
 镜像包：https://hub.docker.com/repository/docker/zyugat/lskypro
 
 ```shell
-docker pull zyugat/lskypro:1.6.3
+docker pull zyugat/lskypro:1.6.4
 ```
 
 
@@ -69,7 +69,7 @@ services:
     #   context: ./lskypro
     #   # 指定Dockerfile文件名称
     #   dockerfile: Dockerfile
-    image: zyugat/lskypro:1.6.3
+    image: zyugat/lskypro:1.6.4
     restart: always
     hostname: lskypro
     container_name: lskypro
